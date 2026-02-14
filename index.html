@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur Rentabilité SAV V2 - The Fixer</title>
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Lato:wght@400;700&display=swap');
+        body { font-family: 'Lato', sans-serif; }
+        h1, h2, h3 { font-family: 'Poppins', sans-serif; }
+        .lm-shadow { box-shadow: 0 10px 25px -5px rgba(0, 141, 54, 0.1), 0 8px 10px -6px rgba(0, 141, 54, 0.1); }
+    </style>
+</head>
+<body class="bg-slate-50 p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto space-y-8">
+        
+        <div class="bg-white p-8 rounded-3xl lm-shadow border-t-8 border-[#008D36] flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-left">
+                <h1 class="text-4xl font-black text-slate-800 uppercase tracking-tighter">Renta <span class="text-[#008D36]">Thune</span> Simulator </h1>
+                <p class="text-slate-500 font-bold mt-2">Pilotage de la Rentabilité & Aide à la Décision SAV</p>
+            </div>
+            <div class="flex items-center gap-4 bg-green-50 px-6 py-3 rounded-2xl border border-green-100">
+                <i class="fa-solid fa-calculator text-2xl text-[#008D36]"></i>
+                <div class="text-xs font-bold uppercase text-green-700 tracking-widest">Outil gestion SAV</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2 bg-white rounded-3xl p-8 lm-shadow">
+                <h2 class="text-2xl font-bold text-slate-800 mb-8 flex items-center gap-3">
+                    <span class="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center text-white"><i class="fa-solid fa-sliders"></i></span>
+                    Simulateur de Cas Précis
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-black text-slate-500 uppercase mb-2">Valeur HT du produit (€)</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-3 text-slate-400 font-bold">€</span>
+                                <input type="number" id="valeurProduit" value="50" class="w-full pl-10 p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-green-500 outline-none font-bold text-xl transition-all">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-black text-slate-500 uppercase mb-2">Temps Tech (min)</label>
+                                <input type="number" id="tempsTech" value="25" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-green-500 outline-none font-bold text-xl transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black text-slate-500 uppercase mb-2">Coût Horaire (€)</label>
+                                <input type="number" id="coutHoraire" value="50" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-green-500 outline-none font-bold text-xl transition-all">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-black text-slate-500 uppercase mb-2">Pièce + Port (€)</label>
+                                <input type="number" id="coutPiece" value="15" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-green-500 outline-none font-bold text-xl transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-black text-slate-500 uppercase mb-2">Admin + Stockage (€)</label>
+                                <input type="number" id="coutAdmin" value="15" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-green-500 outline-none font-bold text-xl transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col justify-between">
+                        <div id="resultCard" class="h-full bg-slate-50 rounded-3xl p-8 border-4 border-dashed border-slate-200 flex flex-col items-center justify-center text-center transition-all">
+                            <h3 id="verdictTitle" class="text-xl font-black uppercase text-slate-400 mb-2">Verdict</h3>
+                            <div id="profitDisplay" class="text-6xl font-black text-slate-800 mb-4 tracking-tighter">0.00 €</div>
+                            <div id="verdictBox" class="px-8 py-3 rounded-full font-black text-sm uppercase tracking-widest text-white bg-slate-400">En attente</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="p-4 bg-slate-50 rounded-2xl">
+                        <span class="block text-[10px] font-black text-slate-400 uppercase">Coût Main d'œuvre</span>
+                        <span id="displayMO" class="text-lg font-bold text-slate-700">0 €</span>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl">
+                        <span class="block text-[10px] font-black text-slate-400 uppercase">Pièce & Logistique</span>
+                        <span id="displayPiece" class="text-lg font-bold text-slate-700">0 €</span>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl">
+                        <span class="block text-[10px] font-black text-slate-400 uppercase">Frais Fixes Admin</span>
+                        <span id="displayAdmin" class="text-lg font-bold text-slate-700">0 €</span>
+                    </div>
+                    <div class="p-4 bg-green-50 rounded-2xl">
+                        <span class="block text-[10px] font-black text-green-600 uppercase">Coût Total SAV</span>
+                        <span id="displayTotal" class="text-lg font-bold text-green-700">0 €</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-8 lm-shadow">
+                <h2 class="text-2xl font-bold text-slate-800 mb-8 flex items-center gap-3">
+                    <span class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-white"><i class="fa-solid fa-table-list"></i></span>
+                    Guide de Seuil
+                </h2>
+                
+                <p class="text-xs text-slate-500 font-bold mb-6 italic leading-relaxed">
+                    Budget maximum alloué à la <span class="text-green-600">Réparation (Main d'œuvre + Pièce)</span> après déduction des frais fixes admin.
+                </p>
+
+                <div class="space-y-2" id="thresholdTable">
+                    </div>
+
+                <div class="mt-8 p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                    <p class="text-[10px] font-bold text-amber-700 leading-tight">
+                        <i class="fa-solid fa-circle-info mr-1"></i>
+                        Si le devis (Pièce + Temps) dépasse ce budget, le dossier est <strong>immédiatement clôturé en échange (Clash)</strong>.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-center text-slate-400 text-sm py-4 border-t border-slate-200">
+            <p><strong>Dossier "The Fixer"</strong> - Optimisation SAV Leroy Merlin</p>
+            <p class="mt-2 md:mt-0 font-bold"><i class="fa-solid fa-code-branch mr-2"></i>Version 2.1 (PWA Ready)</p>
+        </div>
+    </div>
+
+    <script>
+        const inputsIds = ['valeurProduit', 'tempsTech', 'coutHoraire', 'coutPiece', 'coutAdmin'];
+        
+        // Charger les données sauvegardées au démarrage
+        function loadSavedData() {
+            inputsIds.forEach(id => {
+                const savedValue = localStorage.getItem(id);
+                if (savedValue) {
+                    document.getElementById(id).value = savedValue;
+                }
+            });
+        }
+
+        function calculate() {
+            const valProd = parseFloat(document.getElementById('valeurProduit').value) || 0;
+            const tTech = parseFloat(document.getElementById('tempsTech').value) || 0;
+            const cHoraire = parseFloat(document.getElementById('coutHoraire').value) || 0;
+            const cPiece = parseFloat(document.getElementById('coutPiece').value) || 0;
+            const cAdmin = parseFloat(document.getElementById('coutAdmin').value) || 0;
+
+            // Sauvegarder les valeurs pour la prochaine session
+            inputsIds.forEach(id => {
+                localStorage.setItem(id, document.getElementById(id).value);
+            });
+
+            const coutMO = (tTech / 60) * cHoraire;
+            const coutTotal = coutMO + cPiece + cAdmin;
+            const profit = valProd - coutTotal;
+
+            document.getElementById('displayMO').innerText = coutMO.toFixed(2) + ' €';
+            document.getElementById('displayPiece').innerText = cPiece.toFixed(2) + ' €';
+            document.getElementById('displayAdmin').innerText = cAdmin.toFixed(2) + ' €';
+            document.getElementById('displayTotal').innerText = coutTotal.toFixed(2) + ' €';
+            document.getElementById('profitDisplay').innerText = profit.toFixed(2) + ' €';
+            
+            const profitEl = document.getElementById('profitDisplay');
+            const verdictEl = document.getElementById('verdictBox');
+            const resultCard = document.getElementById('resultCard');
+            const verdictTitle = document.getElementById('verdictTitle');
+
+            if (profit < 0) {
+                profitEl.className = "text-6xl font-black mb-4 text-red-600 tracking-tighter";
+                verdictEl.innerText = "DÉCISION : CLASH (ECHANGE)";
+                verdictEl.className = "px-8 py-3 rounded-full font-black text-sm uppercase tracking-widest text-white bg-red-600 animate-pulse";
+                resultCard.className = "h-full bg-red-50 rounded-3xl p-8 border-4 border-dashed border-red-200 flex flex-col items-center justify-center text-center";
+                verdictTitle.innerText = "OPÉRATION DÉFICITAIRE";
+                verdictTitle.className = "text-xl font-black uppercase text-red-400 mb-2";
+            } else {
+                profitEl.className = "text-6xl font-black mb-4 text-green-600 tracking-tighter";
+                verdictEl.innerText = "DÉCISION : RÉPARATION";
+                verdictEl.className = "px-8 py-3 rounded-full font-black text-sm uppercase tracking-widest text-white bg-green-600";
+                resultCard.className = "h-full bg-green-50 rounded-3xl p-8 border-4 border-dashed border-green-200 flex flex-col items-center justify-center text-center";
+                verdictTitle.innerText = "OPÉRATION RENTABLE";
+                verdictTitle.className = "text-xl font-black uppercase text-green-400 mb-2";
+            }
+
+            generateThresholdTable(cAdmin);
+        }
+
+        function generateThresholdTable(currentAdmin) {
+            const tableEl = document.getElementById('thresholdTable');
+            const prices = [25, 30, 35, 40, 45, 50, 60, 75, 100];
+            let html = '';
+
+            prices.forEach(price => {
+                const budgetRep = price - currentAdmin;
+                const isPossible = budgetRep > 0;
+                
+                html += `
+                    <div class="flex items-center justify-between p-4 ${isPossible ? 'bg-slate-50' : 'bg-red-50 opacity-60'} rounded-xl border border-slate-100">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-black text-slate-400 uppercase">Prix HT</span>
+                            <span class="text-xl font-black text-slate-800">${price} €</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-[10px] font-black text-slate-400 uppercase">Budget Répa Max</span>
+                            <span class="text-lg font-black ${isPossible ? 'text-green-600' : 'text-red-500'}">
+                                ${isPossible ? budgetRep.toFixed(2) + ' €' : 'CLASH DIRECT'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+            tableEl.innerHTML = html;
+        }
+
+        // Init
+        loadSavedData();
+        inputsIds.forEach(id => document.getElementById(id).addEventListener('input', calculate));
+        calculate();
+    </script>
+</body>
+</html>
